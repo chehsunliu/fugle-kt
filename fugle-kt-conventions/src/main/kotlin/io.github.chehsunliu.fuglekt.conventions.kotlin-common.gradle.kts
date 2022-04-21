@@ -4,11 +4,10 @@ plugins {
 }
 
 group = "io.github.chehsunliu.fuglekt"
+
 version = "0.1.0-SNAPSHOT"
 
-repositories {
-  mavenCentral()
-}
+repositories { mavenCentral() }
 
 dependencies {
   implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
@@ -17,14 +16,8 @@ dependencies {
 }
 
 spotless {
-  kotlin {
-    ktfmt()
-  }
-  kotlinGradle {
-    ktfmt()
-  }
+  kotlin { ktfmt() }
+  kotlinGradle { ktfmt() }
 }
 
-tasks.test {
-  useJUnitPlatform()
-}
+tasks.test { useJUnitPlatform() }

@@ -10,4 +10,9 @@ dependencies {
   implementation("com.diffplug.spotless:spotless-plugin-gradle:6.4.1")
 }
 
-spotless { kotlinGradle { ktfmt() } }
+spotless {
+  kotlinGradle {
+    target("**/*.gradle.kts")
+    ktfmt()
+  }
+}
