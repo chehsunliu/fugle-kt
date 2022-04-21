@@ -1,11 +1,14 @@
 plugins {
   kotlin("jvm")
   id("com.diffplug.spotless")
+  id("com.palantir.git-version")
 }
 
 group = "io.github.chehsunliu.fuglekt"
 
-version = "0.1.0-SNAPSHOT"
+val gitVersion: groovy.lang.Closure<String> by extra
+
+version = gitVersion()
 
 repositories { mavenCentral() }
 
