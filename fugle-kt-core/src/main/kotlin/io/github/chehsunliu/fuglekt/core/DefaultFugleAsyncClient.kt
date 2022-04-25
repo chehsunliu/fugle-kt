@@ -15,7 +15,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 
-class DefaultFugleAsyncClient(private val baseUrl: HttpUrl, private val token: String) :
+internal class DefaultFugleAsyncClient(private val baseUrl: HttpUrl, private val token: String) :
     FugleAsyncClient {
   private val client = OkHttpClient()
 

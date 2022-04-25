@@ -73,6 +73,16 @@ internal class FugleAsyncClientTest {
         { assertEquals("2330", response.symbolId) },
         { assertEquals("EQUITY", response.type) },
         { assertEquals("TWSE", response.exchange) },
-        { assertEquals("TSE", response.market) })
+        { assertEquals("TSE", response.market) },
+        { assertEquals(6, response.candles.size) })
+
+    val candle = response.candles[0]
+    assertAll(
+        { assertEquals(LocalDate.of(2022, 4, 22), candle.date) },
+        { assertEquals(35_567_672, candle.volume) },
+        { assertEquals(558.0, candle.open) },
+        { assertEquals(558.0, candle.close) },
+        { assertEquals(557.0, candle.low) },
+        { assertEquals(559.0, candle.high) })
   }
 }
