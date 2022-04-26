@@ -24,7 +24,7 @@ internal class DefaultFugleAsyncClient(private val baseUrl: HttpUrl, private val
     val urlBuilder =
         HttpUrl.Builder()
             .configureUrlBuilder()
-            .addPathSegment("/realtime/v0.3/intraday/volumes")
+            .addEncodedPathSegments("realtime/v0.3/intraday/volumes")
             .addQueryParameter("symbolId", symbolId)
 
     if (oddLot != null) {
@@ -43,7 +43,7 @@ internal class DefaultFugleAsyncClient(private val baseUrl: HttpUrl, private val
     val url =
         HttpUrl.Builder()
             .configureUrlBuilder()
-            .addPathSegment("/marketdata/v0.3/candles")
+            .addEncodedPathSegments("marketdata/v0.3/candles")
             .addQueryParameter("symbolId", symbolId)
             .addQueryParameter("from", startDate.toString())
             .addQueryParameter("to", endDate.toString())

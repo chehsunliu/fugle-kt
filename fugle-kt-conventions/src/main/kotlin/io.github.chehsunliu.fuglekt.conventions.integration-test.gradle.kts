@@ -7,15 +7,12 @@ sourceSets {
   }
 }
 
-val intTestImplementation: Configuration by configurations.getting {
-  extendsFrom(configurations.implementation.get())
-}
+val intTestImplementation: Configuration by
+    configurations.getting { extendsFrom(configurations.implementation.get()) }
 
 configurations["intTestRuntimeOnly"].extendsFrom(configurations.runtimeOnly.get())
 
-dependencies {
-  intTestImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
-}
+dependencies { intTestImplementation("org.junit.jupiter:junit-jupiter:5.8.2") }
 
 task<Test>("integrationTest") {
   description = "Runs integration tests."

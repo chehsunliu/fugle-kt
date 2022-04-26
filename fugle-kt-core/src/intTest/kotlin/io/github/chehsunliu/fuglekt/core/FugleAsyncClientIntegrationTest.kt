@@ -1,13 +1,66 @@
 package io.github.chehsunliu.fuglekt.core
 
 import java.time.LocalDate
+import kotlin.math.abs
+import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeout
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
 
 internal class FugleAsyncClientIntegrationTest {
   private val client = FugleAsyncClient.create(token = System.getenv("FUGLE_TOKEN"))
+
+  @Test
+  fun `getting volumes should work`() =
+      runBlocking<Unit> {
+        val today = LocalDate.now()
+
+        val deferred0 = async { client.getVolumes(symbolId = "0050") }
+        val deferred1 = async { client.getVolumes(symbolId = "2330", oddLot = true) }
+
+        withTimeout(3000) { deferred0.await() }.also {
+          val info = it.data.info
+
+          assertAll(
+              { assertTrue(abs(today.year - info.date.year) <= 1) },
+              { assertEquals("EQUITY", info.type) },
+              { assertEquals("TWSE", info.exchange) },
+              { assertEquals("TSE", info.market) },
+              { assertEquals("0050", info.symbolId) },
+              { assertEquals("TW", info.countryCode) },
+              { assertEquals("Asia/Taipei", info.timeZone) },
+              { assertTrue(abs(today.year - info.lastUpdatedAt.year) <= 1) })
+
+          val volumes = it.data.volumes
+          assertAll(
+              { assertTrue(volumes.isNotEmpty()) },
+              { assertTrue(volumes[0].price > 0) },
+              { assertTrue(volumes[0].volume > 0) })
+        }
+
+        withTimeout(3000) { deferred1.await() }.also {
+          val info = it.data.info
+
+          assertAll(
+              { assertTrue(abs(today.year - info.date.year) <= 1) },
+              { assertEquals("ODDLOT", info.type) },
+              { assertEquals("TWSE", info.exchange) },
+              { assertEquals("TSE", info.market) },
+              { assertEquals("2330", info.symbolId) },
+              { assertEquals("TW", info.countryCode) },
+              { assertEquals("Asia/Taipei", info.timeZone) },
+              { assertTrue(abs(today.year - info.lastUpdatedAt.year) <= 1) })
+
+          val volumes = it.data.volumes
+          assertAll(
+              { assertTrue(volumes.isNotEmpty()) },
+              { assertTrue(volumes[0].price > 0) },
+              { assertTrue(volumes[0].volume > 0) })
+        }
+      }
 
   @Test
   fun `getting candles should work`() = runBlocking {
