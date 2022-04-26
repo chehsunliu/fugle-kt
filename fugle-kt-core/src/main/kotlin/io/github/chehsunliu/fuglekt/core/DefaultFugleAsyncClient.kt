@@ -1,6 +1,7 @@
 package io.github.chehsunliu.fuglekt.core
 
 import io.github.chehsunliu.fuglekt.core.model.GetCandlesResponse
+import io.github.chehsunliu.fuglekt.core.model.GetVolumesResponse
 import java.io.IOException
 import java.time.LocalDate
 import java.util.concurrent.CompletableFuture
@@ -19,6 +20,21 @@ internal class DefaultFugleAsyncClient(private val baseUrl: HttpUrl, private val
     FugleAsyncClient {
   private val client = OkHttpClient()
 
+  override suspend fun getVolumes(symbolId: String, oddLot: Boolean?): GetVolumesResponse {
+    val urlBuilder =
+        HttpUrl.Builder()
+            .configureUrlBuilder()
+            .addPathSegment("/realtime/v0.3/intraday/volumes")
+            .addQueryParameter("symbolId", symbolId)
+
+    if (oddLot != null) {
+      urlBuilder.addQueryParameter("oddLot", oddLot.toString())
+    }
+
+    val request = Request.Builder().configureRequestBuilder().get().url(urlBuilder.build()).build()
+    return execute<GetVolumesResponse>(request).await()
+  }
+
   override suspend fun getCandles(
       symbolId: String,
       startDate: LocalDate,
@@ -34,8 +50,20 @@ internal class DefaultFugleAsyncClient(private val baseUrl: HttpUrl, private val
             .build()
 
     val request = Request.Builder().configureRequestBuilder().get().url(url).build()
+    return execute<GetCandlesResponse>(request).await()
+  }
 
-    val future = CompletableFuture<GetCandlesResponse>()
+  private fun HttpUrl.Builder.configureUrlBuilder(): HttpUrl.Builder =
+      this.scheme(baseUrl.scheme)
+          .host(baseUrl.host)
+          .port(baseUrl.port)
+          .addQueryParameter("apiToken", token)
+
+  private fun Request.Builder.configureRequestBuilder(): Request.Builder =
+      this.addHeader("Accept", "*/*").addHeader("Accept-Encoding", "gzip")
+
+  private inline fun <reified T> execute(request: Request): CompletableFuture<T> {
+    val future = CompletableFuture<T>()
     client
         .newCall(request)
         .enqueue(
@@ -61,19 +89,10 @@ internal class DefaultFugleAsyncClient(private val baseUrl: HttpUrl, private val
                       response.body!!.string()
                     }
 
-                future.complete(Json.decodeFromString<GetCandlesResponse>(body))
+                future.complete(Json.decodeFromString<T>(body))
               }
             })
 
-    return future.await()
+    return future
   }
-
-  private fun HttpUrl.Builder.configureUrlBuilder(): HttpUrl.Builder =
-      this.scheme(baseUrl.scheme)
-          .host(baseUrl.host)
-          .port(baseUrl.port)
-          .addQueryParameter("apiToken", token)
-
-  private fun Request.Builder.configureRequestBuilder(): Request.Builder =
-      this.addHeader("Accept", "*/*").addHeader("Accept-Encoding", "gzip")
 }
