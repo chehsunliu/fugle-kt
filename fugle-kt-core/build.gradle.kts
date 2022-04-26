@@ -1,4 +1,7 @@
-plugins { id("io.github.chehsunliu.fuglekt.conventions.kotlin-lib") }
+plugins {
+  id("io.github.chehsunliu.fuglekt.conventions.kotlin-lib")
+  id("io.github.chehsunliu.fuglekt.conventions.integration-test")
+}
 
 dependencies {
   implementation("org.jetbrains.kotlinx:kotlinx-serialization-json")

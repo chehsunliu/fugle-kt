@@ -1,7 +1,7 @@
 package io.github.chehsunliu.fuglekt.core.model
 
-import kotlinx.serialization.Serializable
 import java.time.LocalDate
+import kotlinx.serialization.Serializable
 
 @Serializable
 data class GetCandlesResponse(
@@ -21,4 +21,3 @@ data class GetCandlesResponse(
       val volume: Long,
   )
 }
-

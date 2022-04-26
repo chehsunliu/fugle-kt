@@ -30,7 +30,38 @@ internal class FugleAsyncClientTest {
       FugleAsyncClient.create(url = "http://${server.hostName}:${server.port}", token = "xxx")
 
   @Test
-  fun `getting candles should work`() = runBlocking {
+  fun `getting volumes deserialization should work`() = runBlocking {
+    val body = TestIOUtil.resourceToBytes("/marketdata-test/get-volumes_2330_response.json.gz")
+    server.enqueue(
+        MockResponse()
+            .setResponseCode(200)
+            .setHeader("Content-Encoding", "gzip")
+            .setBody(Buffer().readFrom(body.inputStream())))
+
+    val client = createClient()
+    val response = withTimeout(5000) { client.getVolumes(symbolId = "2330") }
+    assertEquals("0.3.0", response.apiVersion)
+
+    val info = response.data.info
+    assertAll(
+        { assertEquals(LocalDate.of(2022, 4, 26), info.date) },
+        { assertEquals("EQUITY", info.type) },
+        { assertEquals("TWSE", info.exchange) },
+        { assertEquals("TSE", info.market) },
+        { assertEquals("2330", info.symbolId) },
+        { assertEquals("TW", info.countryCode) },
+        { assertEquals("Asia/Taipei", info.timeZone) },
+        { assertEquals(1650858297L, info.lastUpdatedAt.toEpochSecond()) })
+
+    val volumes = response.data.volumes
+    assertAll(
+        { assertEquals(7, volumes.size) },
+        { assertEquals(52, volumes[0].volume) },
+        { assertEquals(551.0, volumes[0].price) })
+  }
+
+  @Test
+  fun `getting candles deserialization not in gzip encoding should work`() = runBlocking {
     val body = TestIOUtil.gzipResourceToBytes("/marketdata-test/get-candles_2330_response.json.gz")
     server.enqueue(
         MockResponse().setResponseCode(200).setBody(Buffer().readFrom(body.inputStream())))
@@ -52,7 +83,7 @@ internal class FugleAsyncClientTest {
   }
 
   @Test
-  fun `getting candles in gzip should work`() = runBlocking {
+  fun `getting candles deserialization should work`() = runBlocking {
     val body = TestIOUtil.resourceToBytes("/marketdata-test/get-candles_2330_response.json.gz")
     server.enqueue(
         MockResponse()
@@ -84,36 +115,5 @@ internal class FugleAsyncClientTest {
         { assertEquals(558.0, candle.close) },
         { assertEquals(557.0, candle.low) },
         { assertEquals(559.0, candle.high) })
-  }
-
-  @Test
-  fun `getting volumes should work`() = runBlocking {
-    val body = TestIOUtil.resourceToBytes("/marketdata-test/get-volumes_2330_response.json.gz")
-    server.enqueue(
-        MockResponse()
-            .setResponseCode(200)
-            .setHeader("Content-Encoding", "gzip")
-            .setBody(Buffer().readFrom(body.inputStream())))
-
-    val client = createClient()
-    val response = withTimeout(5000) { client.getVolumes(symbolId = "2330") }
-    assertEquals("0.3.0", response.apiVersion)
-
-    val info = response.data.info
-    assertAll(
-        { assertEquals(LocalDate.of(2022, 4, 26), info.date) },
-        { assertEquals("EQUITY", info.type) },
-        { assertEquals("TWSE", info.exchange) },
-        { assertEquals("TSE", info.market) },
-        { assertEquals("2330", info.symbolId) },
-        { assertEquals("TW", info.countryCode) },
-        { assertEquals("Asia/Taipei", info.timeZone) },
-        { assertEquals(1650858297L, info.lastUpdatedAt.toEpochSecond()) })
-
-    val volumes = response.data.volumes
-    assertAll(
-        { assertEquals(7, volumes.size) },
-        { assertEquals(52, volumes[0].volume) },
-        { assertEquals(551.0, volumes[0].price) })
   }
 }
