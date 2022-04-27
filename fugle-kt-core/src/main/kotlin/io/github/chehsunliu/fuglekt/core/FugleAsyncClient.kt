@@ -2,11 +2,14 @@ package io.github.chehsunliu.fuglekt.core
 
 import io.github.chehsunliu.fuglekt.core.model.GetCandlesResponse
 import io.github.chehsunliu.fuglekt.core.model.GetDealtsResponse
+import io.github.chehsunliu.fuglekt.core.model.GetMetaResponse
 import io.github.chehsunliu.fuglekt.core.model.GetVolumesResponse
 import java.time.LocalDate
 import okhttp3.HttpUrl.Companion.toHttpUrl
 
 interface FugleAsyncClient {
+  suspend fun getMeta(symbolId: String, oddLot: Boolean? = null): GetMetaResponse
+
   suspend fun getDealts(
       symbolId: String,
       limit: Int? = null,

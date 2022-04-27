@@ -2,12 +2,14 @@ package io.github.chehsunliu.fuglekt.core
 
 import io.github.chehsunliu.fuglekt.core.model.GetCandlesResponse
 import io.github.chehsunliu.fuglekt.core.model.GetDealtsResponse
+import io.github.chehsunliu.fuglekt.core.model.GetMetaResponse
 import io.github.chehsunliu.fuglekt.core.model.GetVolumesResponse
 import java.io.IOException
 import java.time.LocalDate
 import java.util.concurrent.CompletableFuture
 import java.util.zip.GZIPInputStream
 import kotlinx.coroutines.future.await
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import okhttp3.Call
@@ -20,6 +22,21 @@ import okhttp3.Response
 internal class DefaultFugleAsyncClient(private val baseUrl: HttpUrl, private val token: String) :
     FugleAsyncClient {
   private val client = OkHttpClient()
+
+  override suspend fun getMeta(symbolId: String, oddLot: Boolean?): GetMetaResponse {
+    val urlBuilder =
+        HttpUrl.Builder()
+            .configureUrlBuilder()
+            .addEncodedPathSegments("realtime/v0.3/intraday/meta")
+            .addQueryParameter("symbolId", symbolId)
+
+    if (oddLot != null) {
+      urlBuilder.addQueryParameter("oddLot", oddLot.toString())
+    }
+
+    val request = Request.Builder().configureRequestBuilder().get().url(urlBuilder.build()).build()
+    return execute<GetMetaResponse>(request).await()
+  }
 
   override suspend fun getDealts(
       symbolId: String,
@@ -118,7 +135,11 @@ internal class DefaultFugleAsyncClient(private val baseUrl: HttpUrl, private val
                       response.body!!.string()
                     }
 
-                future.complete(Json.decodeFromString<T>(body))
+                try {
+                  future.complete(Json.decodeFromString<T>(body))
+                } catch (e: SerializationException) {
+                  future.completeExceptionally(e)
+                }
               }
             })
 

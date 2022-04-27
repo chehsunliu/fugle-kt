@@ -29,14 +29,58 @@ internal class FugleAsyncClientTest {
   private fun createClient(): FugleAsyncClient =
       FugleAsyncClient.create(url = "http://${server.hostName}:${server.port}", token = "xxx")
 
-  @Test
-  fun `getting dealts deserialization should work`() = runBlocking {
-    val body = TestIOUtil.resourceToBytes("/marketdata-test/get-dealts_0050_response.json.gz")
+  private fun enqueueServer(classpath: String, code: Int = 200) {
+    val body = TestIOUtil.resourceToBytes(classpath)
     server.enqueue(
         MockResponse()
-            .setResponseCode(200)
+            .setResponseCode(code)
             .setHeader("Content-Encoding", "gzip")
             .setBody(Buffer().readFrom(body.inputStream())))
+  }
+
+  @Test
+  fun `getting meta Equity deserialization should work`() = runBlocking {
+    enqueueServer("/marketdata-test/get-meta_2884_response.json.gz")
+    val client = createClient()
+    val response = withTimeout(5000) { client.getMeta(symbolId = "2884") }
+    assertEquals("0.3.0", response.apiVersion)
+  }
+
+  @Test
+  fun `getting meta ETF deserialization should work`() = runBlocking {
+    enqueueServer("/marketdata-test/get-meta_0050_response.json.gz")
+    val client = createClient()
+    val response = withTimeout(5000) { client.getMeta(symbolId = "0050") }
+    assertEquals("0.3.0", response.apiVersion)
+  }
+
+  @Test
+  fun `getting meta Index deserialization should work`() = runBlocking {
+    enqueueServer("/marketdata-test/get-meta_tw50_response.json.gz")
+    val client = createClient()
+    val response = withTimeout(5000) { client.getMeta(symbolId = "TW50") }
+    assertEquals("0.3.0", response.apiVersion)
+  }
+
+  @Test
+  fun `getting meta Warrant deserialization should work`() = runBlocking {
+    enqueueServer("/marketdata-test/get-meta_046500_response.json.gz")
+    val client = createClient()
+    val response = withTimeout(5000) { client.getMeta(symbolId = "046500") }
+    assertEquals("0.3.0", response.apiVersion)
+  }
+
+  @Test
+  fun `getting meta ETF odd lot deserialization should work`() = runBlocking {
+    enqueueServer("/marketdata-test/get-meta_0050-oddlot_response.json.gz")
+    val client = createClient()
+    val response = withTimeout(5000) { client.getMeta(symbolId = "0050", oddLot = true) }
+    assertEquals("0.3.0", response.apiVersion)
+  }
+
+  @Test
+  fun `getting dealts deserialization should work`() = runBlocking {
+    enqueueServer("/marketdata-test/get-dealts_0050_response.json.gz")
 
     val client = createClient()
     val response = withTimeout(5000) { client.getDealts(symbolId = "0050") }
@@ -65,12 +109,7 @@ internal class FugleAsyncClientTest {
 
   @Test
   fun `getting volumes deserialization should work`() = runBlocking {
-    val body = TestIOUtil.resourceToBytes("/marketdata-test/get-volumes_2330_response.json.gz")
-    server.enqueue(
-        MockResponse()
-            .setResponseCode(200)
-            .setHeader("Content-Encoding", "gzip")
-            .setBody(Buffer().readFrom(body.inputStream())))
+    enqueueServer("/marketdata-test/get-volumes_2330_response.json.gz")
 
     val client = createClient()
     val response = withTimeout(5000) { client.getVolumes(symbolId = "2330") }
@@ -118,12 +157,7 @@ internal class FugleAsyncClientTest {
 
   @Test
   fun `getting candles deserialization should work`() = runBlocking {
-    val body = TestIOUtil.resourceToBytes("/marketdata-test/get-candles_2330_response.json.gz")
-    server.enqueue(
-        MockResponse()
-            .setResponseCode(200)
-            .setHeader("Content-Encoding", "gzip")
-            .setBody(Buffer().readFrom(body.inputStream())))
+    enqueueServer("/marketdata-test/get-candles_2330_response.json.gz")
 
     val client = createClient()
     val response =

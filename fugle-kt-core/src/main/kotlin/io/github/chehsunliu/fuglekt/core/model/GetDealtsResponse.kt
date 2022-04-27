@@ -25,8 +25,8 @@ data class GetDealtsResponse(
   @Serializable
   data class Dealt(
       @Serializable(with = OffsetDateTimeSerializer::class) val at: OffsetDateTime,
-      val bid: Double,
-      val ask: Double,
+      val bid: Double? = null,
+      val ask: Double? = null,
       val price: Double,
       val volume: Long,
       val serial: Long,

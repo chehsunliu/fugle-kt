@@ -14,6 +14,20 @@ internal class FugleAsyncClientIntegrationTest {
   private val client = FugleAsyncClient.create(token = System.getenv("FUGLE_TOKEN"))
 
   @Test
+  fun `getting meta should work`() =
+      runBlocking<Unit> {
+        val deferred0 = async { client.getMeta(symbolId = "2884") }
+        val deferred1 = async { client.getMeta(symbolId = "0050") }
+        val deferred2 = async { client.getMeta(symbolId = "0050", oddLot = true) }
+        val deferred3 = async { client.getMeta(symbolId = "046500") }
+
+        deferred0.await()
+        deferred1.await()
+        deferred2.await()
+        deferred3.await()
+      }
+
+  @Test
   fun `getting dealts should work`() =
       runBlocking<Unit> {
         val deferred0 = async { client.getDealts(symbolId = "0050") }
