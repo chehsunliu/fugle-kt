@@ -110,28 +110,22 @@ internal class FugleAsyncClientIntegrationTest {
       }
 
   @Test
-  fun `getting candles should work`() = runBlocking {
-    val response =
-        client.getCandles(
-            symbolId = "0050",
-            startDate = LocalDate.of(2022, 4, 18),
-            endDate = LocalDate.of(2022, 4, 22))
+  fun `getting candles should work`() =
+      runBlocking<Unit> {
+        val startDate = LocalDate.of(2022, 4, 18)
+        val endDate = LocalDate.of(2022, 4, 22)
 
-    assertAll(
-        { assertEquals("0050", response.symbolId) },
-        { assertEquals("EQUITY", response.type) },
-        { assertEquals("TWSE", response.exchange) },
-        { assertEquals("TSE", response.market) },
-        { assertEquals(5, response.candles.size) })
+        val deferred0 = async {
+          client.getCandles(symbolId = "0050", startDate = startDate, endDate = endDate)
+        }
 
-    val candle0 = response.candles[0]
-
-    assertAll(
-        { assertEquals(LocalDate.of(2022, 4, 22), candle0.date) },
-        { assertEquals(131.4, candle0.open) },
-        { assertEquals(131.75, candle0.high) },
-        { assertEquals(130.85, candle0.low) },
-        { assertEquals(131.6, candle0.close) },
-        { assertEquals(12398307L, candle0.volume) })
-  }
+        withTimeout(3000) { deferred0.await() }.also {
+          assertAll(
+              { assertEquals("0050", it.symbolId) },
+              { assertEquals("EQUITY", it.type) },
+              { assertEquals("TWSE", it.exchange) },
+              { assertEquals("TSE", it.market) },
+              { assertEquals(5, it.candles.size) })
+        }
+      }
 }
