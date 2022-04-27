@@ -3,6 +3,7 @@ package io.github.chehsunliu.fuglekt.core
 import io.github.chehsunliu.fuglekt.core.model.GetCandlesResponse
 import io.github.chehsunliu.fuglekt.core.model.GetDealtsResponse
 import io.github.chehsunliu.fuglekt.core.model.GetMetaResponse
+import io.github.chehsunliu.fuglekt.core.model.GetQuoteResponse
 import io.github.chehsunliu.fuglekt.core.model.GetVolumesResponse
 import java.io.IOException
 import java.time.LocalDate
@@ -36,6 +37,21 @@ internal class DefaultFugleAsyncClient(private val baseUrl: HttpUrl, private val
 
     val request = Request.Builder().configureRequestBuilder().get().url(urlBuilder.build()).build()
     return execute<GetMetaResponse>(request).await()
+  }
+
+  override suspend fun getQuote(symbolId: String, oddLot: Boolean?): GetQuoteResponse {
+    val urlBuilder =
+        HttpUrl.Builder()
+            .configureUrlBuilder()
+            .addEncodedPathSegments("realtime/v0.3/intraday/quote")
+            .addQueryParameter("symbolId", symbolId)
+
+    if (oddLot != null) {
+      urlBuilder.addQueryParameter("oddLot", oddLot.toString())
+    }
+
+    val request = Request.Builder().configureRequestBuilder().get().url(urlBuilder.build()).build()
+    return execute<GetQuoteResponse>(request).await()
   }
 
   override suspend fun getDealts(

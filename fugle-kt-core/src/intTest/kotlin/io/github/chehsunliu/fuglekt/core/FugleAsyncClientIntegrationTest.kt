@@ -28,6 +28,22 @@ internal class FugleAsyncClientIntegrationTest {
       }
 
   @Test
+  fun `getting quote should work`() =
+      runBlocking<Unit> {
+        val deferred0 = async { client.getQuote(symbolId = "2884") }
+        val deferred1 = async { client.getQuote(symbolId = "0050") }
+        val deferred2 = async { client.getQuote(symbolId = "0050", oddLot = true) }
+        val deferred3 = async { client.getQuote(symbolId = "046500") }
+        val deferred4 = async { client.getQuote(symbolId = "TW50") }
+
+        deferred0.await()
+        deferred1.await()
+        deferred2.await()
+        deferred3.await()
+        deferred4.await()
+      }
+
+  @Test
   fun `getting dealts should work`() =
       runBlocking<Unit> {
         val deferred0 = async { client.getDealts(symbolId = "0050") }

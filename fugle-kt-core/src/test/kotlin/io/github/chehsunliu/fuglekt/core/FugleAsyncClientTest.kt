@@ -79,6 +79,30 @@ internal class FugleAsyncClientTest {
   }
 
   @Test
+  fun `getting quote Index deserialization should work`() = runBlocking {
+    enqueueServer("/marketdata-test/get-quote_tw50_response.json.gz")
+    val client = createClient()
+    val response = withTimeout(5000) { client.getQuote(symbolId = "TW50") }
+    assertEquals("0.3.0", response.apiVersion)
+  }
+
+  @Test
+  fun `getting quote ETF deserialization should work`() = runBlocking {
+    enqueueServer("/marketdata-test/get-quote_0050_response.json.gz")
+    val client = createClient()
+    val response = withTimeout(5000) { client.getQuote(symbolId = "0050") }
+    assertEquals("0.3.0", response.apiVersion)
+  }
+
+  @Test
+  fun `getting quote ETF odd lot deserialization should work`() = runBlocking {
+    enqueueServer("/marketdata-test/get-quote_0050-oddlot_response.json.gz")
+    val client = createClient()
+    val response = withTimeout(5000) { client.getQuote(symbolId = "0050") }
+    assertEquals("0.3.0", response.apiVersion)
+  }
+
+  @Test
   fun `getting dealts deserialization should work`() = runBlocking {
     enqueueServer("/marketdata-test/get-dealts_0050_response.json.gz")
 
