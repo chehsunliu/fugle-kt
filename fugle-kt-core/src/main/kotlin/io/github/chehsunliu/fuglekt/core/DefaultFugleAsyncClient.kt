@@ -1,6 +1,7 @@
 package io.github.chehsunliu.fuglekt.core
 
 import io.github.chehsunliu.fuglekt.core.model.GetCandlesResponse
+import io.github.chehsunliu.fuglekt.core.model.GetDealtsResponse
 import io.github.chehsunliu.fuglekt.core.model.GetVolumesResponse
 import java.io.IOException
 import java.time.LocalDate
@@ -19,6 +20,34 @@ import okhttp3.Response
 internal class DefaultFugleAsyncClient(private val baseUrl: HttpUrl, private val token: String) :
     FugleAsyncClient {
   private val client = OkHttpClient()
+
+  override suspend fun getDealts(
+      symbolId: String,
+      limit: Int?,
+      offset: Int?,
+      oddLot: Boolean?
+  ): GetDealtsResponse {
+    val urlBuilder =
+        HttpUrl.Builder()
+            .configureUrlBuilder()
+            .addEncodedPathSegments("realtime/v0.3/intraday/dealts")
+            .addQueryParameter("symbolId", symbolId)
+
+    if (limit != null) {
+      urlBuilder.addQueryParameter("limit", limit.toString())
+    }
+
+    if (offset != null) {
+      urlBuilder.addQueryParameter("offset", offset.toString())
+    }
+
+    if (oddLot != null) {
+      urlBuilder.addQueryParameter("oddLot", oddLot.toString())
+    }
+
+    val request = Request.Builder().configureRequestBuilder().get().url(urlBuilder.build()).build()
+    return execute<GetDealtsResponse>(request).await()
+  }
 
   override suspend fun getVolumes(symbolId: String, oddLot: Boolean?): GetVolumesResponse {
     val urlBuilder =

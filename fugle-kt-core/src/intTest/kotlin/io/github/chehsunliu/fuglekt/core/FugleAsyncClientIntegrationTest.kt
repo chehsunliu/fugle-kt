@@ -14,6 +14,41 @@ internal class FugleAsyncClientIntegrationTest {
   private val client = FugleAsyncClient.create(token = System.getenv("FUGLE_TOKEN"))
 
   @Test
+  fun `getting dealts should work`() =
+      runBlocking<Unit> {
+        val deferred0 = async { client.getDealts(symbolId = "0050") }
+        val deferred1 = async { client.getDealts(symbolId = "2330", offset = 2, limit = 5) }
+        val deferred2 = async { client.getDealts(symbolId = "2330", oddLot = true) }
+
+        withTimeout(3000) { deferred0.await() }.also {
+          val info = it.data.info
+          assertAll(
+              { assertEquals("EQUITY", info.type) },
+              { assertEquals("TWSE", info.exchange) },
+              { assertEquals("TSE", info.market) },
+              { assertEquals("0050", info.symbolId) },
+              { assertEquals("TW", info.countryCode) },
+              { assertEquals("Asia/Taipei", info.timeZone) })
+
+          val dealts = it.data.dealts
+          assertTrue(dealts.isNotEmpty())
+        }
+
+        withTimeout(3000) { deferred1.await() }.also {
+          val info = it.data.info
+          assertAll({ assertEquals("EQUITY", info.type) }, { assertEquals("2330", info.symbolId) })
+
+          val dealts = it.data.dealts
+          assertEquals(5, dealts.size)
+        }
+
+        withTimeout(3000) { deferred2.await() }.also {
+          val info = it.data.info
+          assertAll({ assertEquals("ODDLOT", info.type) }, { assertEquals("2330", info.symbolId) })
+        }
+      }
+
+  @Test
   fun `getting volumes should work`() =
       runBlocking<Unit> {
         val today = LocalDate.now()
@@ -23,7 +58,6 @@ internal class FugleAsyncClientIntegrationTest {
 
         withTimeout(3000) { deferred0.await() }.also {
           val info = it.data.info
-
           assertAll(
               { assertTrue(abs(today.year - info.date.year) <= 1) },
               { assertEquals("EQUITY", info.type) },
@@ -43,7 +77,6 @@ internal class FugleAsyncClientIntegrationTest {
 
         withTimeout(3000) { deferred1.await() }.also {
           val info = it.data.info
-
           assertAll(
               { assertTrue(abs(today.year - info.date.year) <= 1) },
               { assertEquals("ODDLOT", info.type) },

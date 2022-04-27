@@ -30,6 +30,40 @@ internal class FugleAsyncClientTest {
       FugleAsyncClient.create(url = "http://${server.hostName}:${server.port}", token = "xxx")
 
   @Test
+  fun `getting dealts deserialization should work`() = runBlocking {
+    val body = TestIOUtil.resourceToBytes("/marketdata-test/get-dealts_0050_response.json.gz")
+    server.enqueue(
+        MockResponse()
+            .setResponseCode(200)
+            .setHeader("Content-Encoding", "gzip")
+            .setBody(Buffer().readFrom(body.inputStream())))
+
+    val client = createClient()
+    val response = withTimeout(5000) { client.getDealts(symbolId = "0050") }
+    assertEquals("0.3.0", response.apiVersion)
+
+    val info = response.data.info
+    assertAll(
+        { assertEquals(LocalDate.of(2022, 4, 27), info.date) },
+        { assertEquals("EQUITY", info.type) },
+        { assertEquals("TWSE", info.exchange) },
+        { assertEquals("TSE", info.market) },
+        { assertEquals("0050", info.symbolId) },
+        { assertEquals("TW", info.countryCode) },
+        { assertEquals("Asia/Taipei", info.timeZone) })
+
+    val dealts = response.data.dealts
+    assertAll(
+        { assertEquals(50, dealts.size) },
+        { assertEquals("2022-04-27T11:25:58.821+08:00", dealts[0].at.toString()) },
+        { assertEquals(126.7, dealts[0].bid) },
+        { assertEquals(126.8, dealts[0].ask) },
+        { assertEquals(126.7, dealts[0].price) },
+        { assertEquals(1L, dealts[0].volume) },
+        { assertEquals(6321031L, dealts[0].serial) })
+  }
+
+  @Test
   fun `getting volumes deserialization should work`() = runBlocking {
     val body = TestIOUtil.resourceToBytes("/marketdata-test/get-volumes_2330_response.json.gz")
     server.enqueue(
