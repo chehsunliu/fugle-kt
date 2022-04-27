@@ -124,7 +124,7 @@ internal class FugleAsyncClientTest {
         { assertEquals("2330", info.symbolId) },
         { assertEquals("TW", info.countryCode) },
         { assertEquals("Asia/Taipei", info.timeZone) },
-        { assertEquals(1650858297L, info.lastUpdatedAt.toEpochSecond()) })
+        { assertEquals(1650858297L, info.lastUpdatedAt!!.toEpochSecond()) })
 
     val volumes = response.data.volumes
     assertAll(

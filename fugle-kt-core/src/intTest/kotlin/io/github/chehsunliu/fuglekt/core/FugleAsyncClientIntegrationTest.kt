@@ -80,7 +80,7 @@ internal class FugleAsyncClientIntegrationTest {
               { assertEquals("0050", info.symbolId) },
               { assertEquals("TW", info.countryCode) },
               { assertEquals("Asia/Taipei", info.timeZone) },
-              { assertTrue(abs(today.year - info.lastUpdatedAt.year) <= 1) })
+              { assertTrue(abs(today.year - info.lastUpdatedAt!!.year) <= 1) })
 
           val volumes = it.data.volumes
           assertAll(
@@ -99,7 +99,7 @@ internal class FugleAsyncClientIntegrationTest {
               { assertEquals("2330", info.symbolId) },
               { assertEquals("TW", info.countryCode) },
               { assertEquals("Asia/Taipei", info.timeZone) },
-              { assertTrue(abs(today.year - info.lastUpdatedAt.year) <= 1) })
+              { assertTrue(abs(today.year - info.lastUpdatedAt!!.year) <= 1) })
 
           val volumes = it.data.volumes
           assertAll(
