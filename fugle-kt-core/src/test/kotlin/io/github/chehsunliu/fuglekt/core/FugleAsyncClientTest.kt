@@ -40,7 +40,7 @@ internal class FugleAsyncClientTest {
 
   @Test
   fun `getting meta Equity deserialization should work`() = runBlocking {
-    enqueueServer("/marketdata-test/get-meta_2884_response.json.gz")
+    enqueueServer("/intraday-test/get-meta_2884_response.json.gz")
     val client = createClient()
     val response = withTimeout(5000) { client.getMeta(symbolId = "2884") }
     assertEquals("0.3.0", response.apiVersion)
@@ -48,7 +48,7 @@ internal class FugleAsyncClientTest {
 
   @Test
   fun `getting meta ETF deserialization should work`() = runBlocking {
-    enqueueServer("/marketdata-test/get-meta_0050_response.json.gz")
+    enqueueServer("/intraday-test/get-meta_0050_response.json.gz")
     val client = createClient()
     val response = withTimeout(5000) { client.getMeta(symbolId = "0050") }
     assertEquals("0.3.0", response.apiVersion)
@@ -56,7 +56,7 @@ internal class FugleAsyncClientTest {
 
   @Test
   fun `getting meta Index deserialization should work`() = runBlocking {
-    enqueueServer("/marketdata-test/get-meta_tw50_response.json.gz")
+    enqueueServer("/intraday-test/get-meta_tw50_response.json.gz")
     val client = createClient()
     val response = withTimeout(5000) { client.getMeta(symbolId = "TW50") }
     assertEquals("0.3.0", response.apiVersion)
@@ -64,7 +64,7 @@ internal class FugleAsyncClientTest {
 
   @Test
   fun `getting meta Warrant deserialization should work`() = runBlocking {
-    enqueueServer("/marketdata-test/get-meta_046500_response.json.gz")
+    enqueueServer("/intraday-test/get-meta_046500_response.json.gz")
     val client = createClient()
     val response = withTimeout(5000) { client.getMeta(symbolId = "046500") }
     assertEquals("0.3.0", response.apiVersion)
@@ -72,7 +72,7 @@ internal class FugleAsyncClientTest {
 
   @Test
   fun `getting meta ETF odd lot deserialization should work`() = runBlocking {
-    enqueueServer("/marketdata-test/get-meta_0050-oddlot_response.json.gz")
+    enqueueServer("/intraday-test/get-meta_0050-oddlot_response.json.gz")
     val client = createClient()
     val response = withTimeout(5000) { client.getMeta(symbolId = "0050", oddLot = true) }
     assertEquals("0.3.0", response.apiVersion)
@@ -80,7 +80,7 @@ internal class FugleAsyncClientTest {
 
   @Test
   fun `getting quote Index deserialization should work`() = runBlocking {
-    enqueueServer("/marketdata-test/get-quote_tw50_response.json.gz")
+    enqueueServer("/intraday-test/get-quote_tw50_response.json.gz")
     val client = createClient()
     val response = withTimeout(5000) { client.getQuote(symbolId = "TW50") }
     assertEquals("0.3.0", response.apiVersion)
@@ -88,7 +88,7 @@ internal class FugleAsyncClientTest {
 
   @Test
   fun `getting quote ETF deserialization should work`() = runBlocking {
-    enqueueServer("/marketdata-test/get-quote_0050_response.json.gz")
+    enqueueServer("/intraday-test/get-quote_0050_response.json.gz")
     val client = createClient()
     val response = withTimeout(5000) { client.getQuote(symbolId = "0050") }
     assertEquals("0.3.0", response.apiVersion)
@@ -96,7 +96,7 @@ internal class FugleAsyncClientTest {
 
   @Test
   fun `getting quote ETF odd lot deserialization should work`() = runBlocking {
-    enqueueServer("/marketdata-test/get-quote_0050-oddlot_response.json.gz")
+    enqueueServer("/intraday-test/get-quote_0050-oddlot_response.json.gz")
     val client = createClient()
     val response = withTimeout(5000) { client.getQuote(symbolId = "0050") }
     assertEquals("0.3.0", response.apiVersion)
@@ -104,7 +104,7 @@ internal class FugleAsyncClientTest {
 
   @Test
   fun `getting dealts deserialization should work`() = runBlocking {
-    enqueueServer("/marketdata-test/get-dealts_0050_response.json.gz")
+    enqueueServer("/intraday-test/get-dealts_0050_response.json.gz")
 
     val client = createClient()
     val response = withTimeout(5000) { client.getDealts(symbolId = "0050") }
@@ -133,7 +133,7 @@ internal class FugleAsyncClientTest {
 
   @Test
   fun `getting volumes deserialization should work`() = runBlocking {
-    enqueueServer("/marketdata-test/get-volumes_2330_response.json.gz")
+    enqueueServer("/intraday-test/get-volumes_2330_response.json.gz")
 
     val client = createClient()
     val response = withTimeout(5000) { client.getVolumes(symbolId = "2330") }
