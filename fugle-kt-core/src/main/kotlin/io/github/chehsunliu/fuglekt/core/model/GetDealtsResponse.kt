@@ -18,7 +18,7 @@ data class GetDealtsResponse(val apiVersion: String, val data: Data) {
       val bid: Double? = null,
       val ask: Double? = null,
       val price: Double,
-      val volume: Long,
+      val volume: Long? = null,
       val serial: Long,
   )
 }
