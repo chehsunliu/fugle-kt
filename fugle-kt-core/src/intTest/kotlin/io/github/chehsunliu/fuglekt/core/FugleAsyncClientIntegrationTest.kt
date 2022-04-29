@@ -36,6 +36,7 @@ internal class FugleAsyncClientIntegrationTest {
                   async { client.getQuote(symbolId = it.symbolId) },
                   async { client.getDealts(symbolId = it.symbolId) },
                   async { client.getVolumes(symbolId = it.symbolId) },
+                  async { client.getChart(symbolId = it.symbolId) },
               )
 
           val l2 =
@@ -45,6 +46,7 @@ internal class FugleAsyncClientIntegrationTest {
                       async { client.getQuote(symbolId = it.symbolId, oddLot = true) },
                       async { client.getDealts(symbolId = it.symbolId, oddLot = true) },
                       async { client.getVolumes(symbolId = it.symbolId, oddLot = true) },
+                      async { client.getChart(symbolId = it.symbolId, oddLot = true) },
                   )
               else emptyList()
 

@@ -1,6 +1,7 @@
 package io.github.chehsunliu.fuglekt.core
 
 import io.github.chehsunliu.fuglekt.core.model.GetCandlesResponse
+import io.github.chehsunliu.fuglekt.core.model.GetChartResponse
 import io.github.chehsunliu.fuglekt.core.model.GetDealtsResponse
 import io.github.chehsunliu.fuglekt.core.model.GetMetaResponse
 import io.github.chehsunliu.fuglekt.core.model.GetQuoteResponse
@@ -12,6 +13,8 @@ interface FugleAsyncClient {
   suspend fun getMeta(symbolId: String, oddLot: Boolean? = null): GetMetaResponse
 
   suspend fun getQuote(symbolId: String, oddLot: Boolean? = null): GetQuoteResponse
+
+  suspend fun getChart(symbolId: String, oddLot: Boolean? = null): GetChartResponse
 
   suspend fun getDealts(
       symbolId: String,

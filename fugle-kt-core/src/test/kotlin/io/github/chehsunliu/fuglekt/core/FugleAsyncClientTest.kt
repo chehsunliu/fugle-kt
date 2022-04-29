@@ -103,6 +103,14 @@ internal class FugleAsyncClientTest {
   }
 
   @Test
+  fun `getting chart deserialization should work`() = runBlocking {
+    enqueueServer("/intraday-test/get-chart_2330_response.json.gz")
+    val client = createClient()
+    val response = withTimeout(5000) { client.getChart(symbolId = "2330") }
+    assertEquals("0.3.0", response.apiVersion)
+  }
+
+  @Test
   fun `getting dealts deserialization should work`() = runBlocking {
     enqueueServer("/intraday-test/get-dealts_0050_response.json.gz")
 

@@ -1,6 +1,7 @@
 package io.github.chehsunliu.fuglekt.core
 
 import io.github.chehsunliu.fuglekt.core.model.GetCandlesResponse
+import io.github.chehsunliu.fuglekt.core.model.GetChartResponse
 import io.github.chehsunliu.fuglekt.core.model.GetDealtsResponse
 import io.github.chehsunliu.fuglekt.core.model.GetMetaResponse
 import io.github.chehsunliu.fuglekt.core.model.GetQuoteResponse
@@ -52,6 +53,21 @@ internal class DefaultFugleAsyncClient(private val baseUrl: HttpUrl, private val
 
     val request = Request.Builder().configureRequestBuilder().get().url(urlBuilder.build()).build()
     return execute<GetQuoteResponse>(request).await()
+  }
+
+  override suspend fun getChart(symbolId: String, oddLot: Boolean?): GetChartResponse {
+    val urlBuilder =
+        HttpUrl.Builder()
+            .configureUrlBuilder()
+            .addEncodedPathSegments("realtime/v0.3/intraday/chart")
+            .addQueryParameter("symbolId", symbolId)
+
+    if (oddLot != null) {
+      urlBuilder.addQueryParameter("oddLot", oddLot.toString())
+    }
+
+    val request = Request.Builder().configureRequestBuilder().get().url(urlBuilder.build()).build()
+    return execute<GetChartResponse>(request).await()
   }
 
   override suspend fun getDealts(
