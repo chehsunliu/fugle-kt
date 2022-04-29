@@ -2,6 +2,7 @@ package io.github.chehsunliu.fuglekt.core
 
 import io.github.chehsunliu.fuglekt.core.test.TestIOUtil
 import java.time.LocalDate
+import java.time.LocalDateTime
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 import okhttp3.mockwebserver.MockResponse
@@ -47,56 +48,8 @@ internal class FugleAsyncClientTest {
   }
 
   @Test
-  fun `getting meta ETF deserialization should work`() = runBlocking {
-    enqueueServer("/intraday-test/get-meta_0050_response.json.gz")
-    val client = createClient()
-    val response = withTimeout(5000) { client.getMeta(symbolId = "0050") }
-    assertEquals("0.3.0", response.apiVersion)
-  }
-
-  @Test
-  fun `getting meta Index deserialization should work`() = runBlocking {
-    enqueueServer("/intraday-test/get-meta_tw50_response.json.gz")
-    val client = createClient()
-    val response = withTimeout(5000) { client.getMeta(symbolId = "TW50") }
-    assertEquals("0.3.0", response.apiVersion)
-  }
-
-  @Test
-  fun `getting meta Warrant deserialization should work`() = runBlocking {
-    enqueueServer("/intraday-test/get-meta_046500_response.json.gz")
-    val client = createClient()
-    val response = withTimeout(5000) { client.getMeta(symbolId = "046500") }
-    assertEquals("0.3.0", response.apiVersion)
-  }
-
-  @Test
-  fun `getting meta ETF odd lot deserialization should work`() = runBlocking {
-    enqueueServer("/intraday-test/get-meta_0050-oddlot_response.json.gz")
-    val client = createClient()
-    val response = withTimeout(5000) { client.getMeta(symbolId = "0050", oddLot = true) }
-    assertEquals("0.3.0", response.apiVersion)
-  }
-
-  @Test
-  fun `getting quote Index deserialization should work`() = runBlocking {
-    enqueueServer("/intraday-test/get-quote_tw50_response.json.gz")
-    val client = createClient()
-    val response = withTimeout(5000) { client.getQuote(symbolId = "TW50") }
-    assertEquals("0.3.0", response.apiVersion)
-  }
-
-  @Test
   fun `getting quote ETF deserialization should work`() = runBlocking {
     enqueueServer("/intraday-test/get-quote_0050_response.json.gz")
-    val client = createClient()
-    val response = withTimeout(5000) { client.getQuote(symbolId = "0050") }
-    assertEquals("0.3.0", response.apiVersion)
-  }
-
-  @Test
-  fun `getting quote ETF odd lot deserialization should work`() = runBlocking {
-    enqueueServer("/intraday-test/get-quote_0050-oddlot_response.json.gz")
     val client = createClient()
     val response = withTimeout(5000) { client.getQuote(symbolId = "0050") }
     assertEquals("0.3.0", response.apiVersion)
@@ -108,6 +61,9 @@ internal class FugleAsyncClientTest {
     val client = createClient()
     val response = withTimeout(5000) { client.getChart(symbolId = "2330") }
     assertEquals("0.3.0", response.apiVersion)
+
+    val chart = response.data.chart
+    assertEquals(LocalDateTime.of(2022, 4, 29, 1, 1), chart.timestamps[0])
   }
 
   @Test

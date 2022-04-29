@@ -1,7 +1,10 @@
 package io.github.chehsunliu.fuglekt.core.model
 
+import java.time.Instant
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
@@ -19,6 +22,19 @@ internal object LocalDateSerializer : KSerializer<LocalDate> {
 
   override fun deserialize(decoder: Decoder): LocalDate {
     return LocalDate.parse(decoder.decodeString())
+  }
+}
+
+internal object LocalDateTimeSerializer : KSerializer<LocalDateTime> {
+  override val descriptor: SerialDescriptor =
+      PrimitiveSerialDescriptor("LocalDateTime", PrimitiveKind.LONG)
+
+  override fun serialize(encoder: Encoder, value: LocalDateTime) {
+    encoder.encodeString(value.toString())
+  }
+
+  override fun deserialize(decoder: Decoder): LocalDateTime {
+    return LocalDateTime.ofInstant(Instant.ofEpochMilli(decoder.decodeLong()), ZoneOffset.UTC)
   }
 }
 

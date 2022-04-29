@@ -1,5 +1,7 @@
 package io.github.chehsunliu.fuglekt.core.model
 
+import java.time.LocalDateTime
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -15,6 +17,7 @@ data class GetChartResponse(val apiVersion: String, val data: Data) {
       val l: List<Double>,
       val c: List<Double>,
       val v: List<Long>,
-      val t: List<Long>,
+      @SerialName("t")
+      val timestamps: List<@Serializable(with = LocalDateTimeSerializer::class) LocalDateTime>,
   )
 }
