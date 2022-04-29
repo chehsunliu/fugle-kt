@@ -25,3 +25,8 @@ jobs:
 
       - name: Build library
         run: ./gradlew build
+
+      - name: Run integration tests
+        run: ./gradlew integrationTest
+        env:
+          FUGLE_TOKEN: ${{ secrets.FUGLE_TOKEN }}
