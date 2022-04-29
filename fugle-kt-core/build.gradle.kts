@@ -1,6 +1,7 @@
 plugins {
   id("io.github.chehsunliu.fuglekt.conventions.kotlin-lib")
   id("io.github.chehsunliu.fuglekt.conventions.integration-test")
+  id("io.github.chehsunliu.fuglekt.conventions.publish")
 }
 
 dependencies {
