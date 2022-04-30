@@ -11,7 +11,7 @@ fugle-kt is a client for Fugle Realtime API.
 Fetch the dependency via Gradle:
 
 ```kotlin
-implementation("io.github.chehsunliu.fuglekt:fugle-kt-core:0.2.0-beta.1")
+implementation("io.github.chehsunliu.fuglekt:fugle-kt-core:VERSION")
 
 implementation(platform("org.jetbrains.kotlinx:kotlinx-coroutines-bom:1.6.1"))
 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
