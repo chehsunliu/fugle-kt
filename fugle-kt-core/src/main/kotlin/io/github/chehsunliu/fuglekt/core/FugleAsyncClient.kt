@@ -6,10 +6,11 @@ import io.github.chehsunliu.fuglekt.core.model.GetDealtsResponse
 import io.github.chehsunliu.fuglekt.core.model.GetMetaResponse
 import io.github.chehsunliu.fuglekt.core.model.GetQuoteResponse
 import io.github.chehsunliu.fuglekt.core.model.GetVolumesResponse
+import java.io.Closeable
 import java.time.LocalDate
 import okhttp3.HttpUrl.Companion.toHttpUrl
 
-interface FugleAsyncClient {
+interface FugleAsyncClient : Closeable {
   suspend fun getMeta(symbolId: String, oddLot: Boolean? = null): GetMetaResponse
 
   suspend fun getQuote(symbolId: String, oddLot: Boolean? = null): GetQuoteResponse

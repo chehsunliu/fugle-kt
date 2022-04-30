@@ -131,6 +131,10 @@ internal class DefaultFugleAsyncClient(private val baseUrl: HttpUrl, private val
     return execute<GetCandlesResponse>(request).await()
   }
 
+  override fun close() {
+    client.dispatcher.executorService.shutdown()
+  }
+
   private fun HttpUrl.Builder.configureUrlBuilder(): HttpUrl.Builder =
       this.scheme(baseUrl.scheme)
           .host(baseUrl.host)
