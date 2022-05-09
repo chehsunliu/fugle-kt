@@ -22,7 +22,7 @@ internal class FugleAsyncClientIntegrationTest {
       listOf(
           TestCase(symbolId = "2884", hasOddLot = true),
           TestCase(symbolId = "0050", hasOddLot = true),
-          TestCase(symbolId = "046500", hasCandles = false),
+          TestCase(symbolId = "043819", hasCandles = false),
           TestCase(symbolId = "TW50", hasCandles = false),
       )
 
