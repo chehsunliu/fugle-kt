@@ -59,6 +59,7 @@ data class GetQuoteResponse(val apiVersion: String, val data: Data) {
       val ask: Double,
       val price: Double,
       val volume: Long,
+      val serial: Long,
   )
 
   @Serializable
